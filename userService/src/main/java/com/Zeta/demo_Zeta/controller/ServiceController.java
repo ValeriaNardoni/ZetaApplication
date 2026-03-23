@@ -12,7 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.server.ResponseStatusException;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/user")
 public class ServiceController {
 
     @Autowired
@@ -24,25 +24,7 @@ public class ServiceController {
     @Autowired
     private UserService userService;
 
-    @PostMapping("/register")
-    public User register(@RequestBody User user) {
-        return userService.register(user);
-    }
 
-    @PostMapping("/login")
-    public String login(@RequestBody User user) {
-        var existingUser = userService.findByUsername(user.getUsername());
-
-        if (existingUser.isEmpty() ||
-                !passwordEncoder.matches(user.getPassword(), existingUser.get().getPassword())) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials");
-        }
-
-        return jwtService.generateToken(
-                existingUser.get().getUsername(),
-                existingUser.get().getRole().name()
-        );
-    }
 
     @GetMapping("/users")
     public List<UserDTO> getAllUsersPublic() {
