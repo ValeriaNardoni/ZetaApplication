@@ -1,0 +1,52 @@
+services:
+
+  # -------- USER DB --------
+  postgres-user:
+    image: postgres:15
+    container_name: postgres-user
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: user_db
+    ports:
+      - "5434:5432"
+
+  # -------- USER SERVICE --------
+  user-service:
+    build: ./userService
+    container_name: user-service
+    depends_on:
+      - postgres-user
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-user:5432/user_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+
+  # -------- DOC DB --------
+  postgres-docs:
+    image: postgres:15
+    container_name: postgres-docs
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: docs_db
+    ports:
+      - "5433:5432"
+
+  # -------- DOCUMENT SERVICE --------
+  document-service:
+    build: ./documentService
+    container_name: document-service
+    depends_on:
+      - postgres-docs
+      - user-service
+    ports:
+      - "8081:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-docs:5432/docs_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
