@@ -3,7 +3,6 @@ services:
   # -------- USER DB --------
   postgres-user:
     image: postgres:15
-    container_name: postgres-user
     restart: always
     environment:
       POSTGRES_USER: postgres
@@ -11,11 +10,12 @@ services:
       POSTGRES_DB: user_db
     ports:
       - "5434:5432"
+    volumes:
+      - user-db-data:/var/lib/postgresql/data
 
   # -------- USER SERVICE --------
   user-service:
     build: ./userService
-    container_name: user-service
     depends_on:
       - postgres-user
     ports:
@@ -28,7 +28,6 @@ services:
   # -------- DOC DB --------
   postgres-docs:
     image: postgres:15
-    container_name: postgres-docs
     restart: always
     environment:
       POSTGRES_USER: postgres
@@ -36,11 +35,12 @@ services:
       POSTGRES_DB: docs_db
     ports:
       - "5433:5432"
+    volumes:
+      - docs-db-data:/var/lib/postgresql/data
 
   # -------- DOCUMENT SERVICE --------
   document-service:
     build: ./documentService
-    container_name: document-service
     depends_on:
       - postgres-docs
       - user-service
@@ -50,3 +50,7 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-docs:5432/docs_db
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: postgres
+
+volumes:
+  user-db-data:
+  docs-db-data:
