@@ -16,7 +16,7 @@ public class UserClient {
 
     public Object getUsers(String authHeader) {
 
-        String url = "http://user-service:8080/auth/users";
+        String url = "http://user-service:8080/admin/users";
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", authHeader);
